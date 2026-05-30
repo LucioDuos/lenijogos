@@ -1,11 +1,12 @@
 # Leni Jogos
 
-Um portal de jogos em HTML, CSS e JavaScript. A página inicial permite escolher entre quatro experiências:
+Um portal de jogos em HTML, CSS e JavaScript. A página inicial permite escolher entre cinco experiências:
 
 - **Fogo e Água: Templo dos Desafios:** plataforma cooperativa com perigos elementais, cristais, placas, portões e elevadores.
 - **Guardiões da Trilha:** tower defense com mapa detalhado, quatro tipos de torre, melhorias, moedas, ondas sobrepostas, chefes, partículas e controle de velocidade.
 - **Cobrinha Gulosa:** arcade clássico no qual a cobrinha cresce e acelera conforme come frutas.
 - **Mesa de Sequências:** jogo de peças inspirado em Rummikub, com seleção de dificuldade e até três oponentes controlados pelo computador.
+- **Worms:** batalha de artilharia por turnos entre dois times, com terreno destrutível, vento, mira, força do disparo e controles touch.
 
 ## Como executar
 
@@ -42,3 +43,12 @@ Depois acesse `http://127.0.0.1:4173/`.
 - Antes da partida, escolha a quantidade de jogadores e a dificuldade dos computadores.
 - Clique nas peças do seu suporte para selecionar uma sequência ou um grupo válido.
 - Baixe a seleção ou compre uma peça para encerrar seu turno.
+
+
+### Worms
+
+- Use A/D para mover o personagem atual e as setas para cima/baixo para ajustar a mira.
+- Segure espaço para carregar a força e solte para lançar o projétil.
+- No mobile, use os controles touch dentro da área do jogo.
+- As explosões causam dano por proximidade e removem uma parte circular do terreno.
+- Use os botões sobre o mapa para reiniciar ou ativar a tela cheia.
