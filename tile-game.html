@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesa de Sequências • Leni Jogos</title>
+  <link rel="stylesheet" href="styles.css" /><link rel="stylesheet" href="tile-game.css" />
+</head>
+<body class="tile-page">
+<main class="tile-shell">
+  <header class="tile-header"><div><a class="back-link" href="index.html">← Voltar para os jogos</a><p class="eyebrow">Estratégia • Peças</p><h1>Mesa de Sequências</h1><p class="intro">Baixe combinações válidas antes dos computadores e seja o primeiro a esvaziar seu suporte.</p></div><button id="newTileGame">Nova partida</button></header>
+  <section class="tile-layout">
+    <div class="table-card">
+      <div class="opponents" id="opponents"></div>
+      <div class="table-center"><div class="table-heading"><div><span>Mesa compartilhada</span><strong id="turnLabel">Configure uma partida</strong></div><div class="pile">🀫 <b id="pileCount">0</b></div></div><div id="melds" class="melds"><p class="empty-table">As combinações aparecerão aqui.</p></div></div>
+      <div class="player-area"><div class="player-title"><div><span>Seu suporte</span><strong id="rackCount">0 peças</strong></div><small>Selecione 3 ou mais peças para baixar.</small></div><div id="rack" class="rack"></div><div class="rack-actions"><button id="playTiles">Baixar seleção</button><button id="drawTile" class="tile-secondary">Comprar peça e passar</button></div></div>
+    </div>
+    <aside class="tile-rules"><p class="panel-kicker">Como jogar</p><h2>Forme combinações</h2><div class="rule"><b>Sequência</b><span>Três ou mais números seguidos da mesma cor.</span><div><i class="mini red">4</i><i class="mini red">5</i><i class="mini red">6</i></div></div><div class="rule"><b>Grupo</b><span>O mesmo número em três ou quatro cores diferentes.</span><div><i class="mini red">8</i><i class="mini blue">8</i><i class="mini yellow">8</i></div></div><p id="tileMessage" class="tile-message">Escolha como será sua partida.</p></aside>
+  </section>
+</main>
+<div id="setupModal" class="setup-modal"><form id="setupForm" class="setup-box"><p class="eyebrow">Prepare a mesa</p><h2>Nova partida</h2><label>Quantidade de jogadores<select id="playerCount"><option value="2">2 jogadores</option><option value="3" selected>3 jogadores</option><option value="4">4 jogadores</option></select></label><label>Dificuldade dos computadores<select id="difficulty"><option value="easy">Fácil</option><option value="normal" selected>Normal</option><option value="hard">Difícil</option></select></label><button type="submit">Distribuir peças</button></form></div>
+<script src="tile-game.js"></script>
+</body></html>
