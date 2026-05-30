@@ -30,7 +30,7 @@ Depois acesse `http://127.0.0.1:4173/`.
 - Clique em um campo circular vazio para abrir o menu radial e construir um arqueiro, canhão, torre mágica ou torre congelante.
 - Clique em uma defesa existente para abrir o menu de melhoria, venda e informações dentro do mapa.
 - Use o botão de próxima onda a qualquer momento: novas criaturas entram mesmo quando já existem inimigos na trilha.
-- Alterne entre velocidades 1x, 2x e 3x. Chefes aparecem a cada cinco ondas.
+- Use os comandos sobre o mapa para iniciar ondas, alternar entre velocidades 1x, 2x e 3x, controlar o som e ativar a tela cheia. Chefes aparecem a cada cinco ondas.
 
 ### Cobrinha Gulosa
 
