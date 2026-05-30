@@ -3,7 +3,7 @@
 Um portal de jogos em HTML, CSS e JavaScript. A página inicial permite escolher entre quatro experiências:
 
 - **Fogo e Água: Templo dos Desafios:** plataforma cooperativa com perigos elementais, cristais, placas, portões e elevadores.
-- **Guardiões da Trilha:** estratégia e sobrevivência com construção de armas, melhorias, moedas e ondas de inimigos.
+- **Guardiões da Trilha:** tower defense com mapa detalhado, quatro tipos de torre, melhorias, moedas, ondas sobrepostas, chefes, partículas e controle de velocidade.
 - **Cobrinha Gulosa:** arcade clássico no qual a cobrinha cresce e acelera conforme come frutas.
 - **Mesa de Sequências:** jogo de peças inspirado em Rummikub, com seleção de dificuldade e até três oponentes controlados pelo computador.
 
@@ -27,9 +27,10 @@ Depois acesse `http://127.0.0.1:4173/`.
 
 ### Guardiões da Trilha
 
-- Clique em um campo circular vazio para construir um arqueiro ou canhão.
-- Clique em uma defesa existente para melhorá-la ou vendê-la.
-- Use o botão de onda quando estiver pronto para liberar os próximos inimigos.
+- Clique em um campo circular vazio para abrir o menu radial e construir um arqueiro, canhão, torre mágica ou torre congelante.
+- Clique em uma defesa existente para abrir o menu de melhoria, venda e informações dentro do mapa.
+- Use o botão de próxima onda a qualquer momento: novas criaturas entram mesmo quando já existem inimigos na trilha.
+- Alterne entre velocidades 1x, 2x e 3x. Chefes aparecem a cada cinco ondas.
 
 ### Cobrinha Gulosa
 

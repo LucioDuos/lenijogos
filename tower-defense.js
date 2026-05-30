@@ -1,276 +1,41 @@
-const canvas = document.querySelector('#defenseGame');
-const ctx = canvas.getContext('2d');
-const coinsEl = document.querySelector('#coins');
-const livesEl = document.querySelector('#lives');
-const waveEl = document.querySelector('#wave');
-const waveBtn = document.querySelector('#waveBtn');
-const messageEl = document.querySelector('#message');
-const panelTitle = document.querySelector('#panelTitle');
-const panelText = document.querySelector('#panelText');
-const buildOptions = document.querySelector('#buildOptions');
-const upgradeOptions = document.querySelector('#upgradeOptions');
-const upgradeBtn = document.querySelector('#upgradeBtn');
-const sellBtn = document.querySelector('#sellBtn');
-
-const path = [
-  { x: -28, y: 120 }, { x: 155, y: 120 }, { x: 155, y: 290 },
-  { x: 365, y: 290 }, { x: 365, y: 460 }, { x: 585, y: 460 },
-  { x: 585, y: 235 }, { x: 770, y: 235 }, { x: 770, y: 390 }, { x: 990, y: 390 },
-];
-const slots = [
-  { x: 82, y: 220 }, { x: 255, y: 185 }, { x: 255, y: 385 },
-  { x: 465, y: 365 }, { x: 480, y: 535 }, { x: 690, y: 340 },
-  { x: 680, y: 135 }, { x: 866, y: 285 }, { x: 860, y: 500 },
-];
-const towerTypes = {
-  archer: { name: 'Arqueiro', icon: '🏹', cost: 70, range: 138, damage: 14, rate: 34, color: '#6dff9c' },
-  cannon: { name: 'Canhão', icon: '💣', cost: 110, range: 115, damage: 34, rate: 78, color: '#ffb25b' },
-};
-const maxWaves = 8;
-let coins = 180;
-let lives = 20;
-let wave = 0;
-let activeWave = false;
-let spawnQueue = [];
-let spawnTimer = 0;
-let enemies = [];
-let projectiles = [];
-let selectedSlot = null;
-let ended = false;
-
-function updateHud() {
-  coinsEl.textContent = coins;
-  livesEl.textContent = lives;
-  waveEl.textContent = `${wave} / ${maxWaves}`;
-}
-
-function setMessage(text) { messageEl.textContent = text; }
-
-function towerStats(tower) {
-  const base = towerTypes[tower.type];
-  const bonus = 1 + (tower.level - 1) * 0.55;
-  return { ...base, damage: Math.round(base.damage * bonus), range: base.range + (tower.level - 1) * 12, rate: Math.max(16, base.rate - (tower.level - 1) * 5) };
-}
-
-function upgradeCost(tower) { return 55 + tower.level * (tower.type === 'cannon' ? 55 : 40); }
-function sellValue(tower) { return Math.round((towerTypes[tower.type].cost + (tower.level - 1) * 60) * .55); }
-
-function selectSlot(slot) {
-  selectedSlot = slot;
-  if (!slot.tower) {
-    panelTitle.textContent = 'Construir defesa';
-    panelText.textContent = 'Escolha uma arma para instalar neste campo.';
-    buildOptions.hidden = false;
-    upgradeOptions.hidden = true;
-    return;
-  }
-  const stats = towerStats(slot.tower);
-  panelTitle.textContent = stats.name;
-  panelText.textContent = `Dano ${stats.damage} • Alcance ${stats.range} • Velocidade ${stats.rate}`;
-  buildOptions.hidden = true;
-  upgradeOptions.hidden = false;
-  document.querySelector('#towerIcon').textContent = stats.icon;
-  document.querySelector('#towerName').textContent = stats.name;
-  document.querySelector('#towerLevel').textContent = `Nível ${slot.tower.level}`;
-  upgradeCostEl().textContent = `${upgradeCost(slot.tower)} moedas`;
-  document.querySelector('#sellValue').textContent = `+${sellValue(slot.tower)} moedas`;
-  upgradeBtn.disabled = slot.tower.level >= 4;
-  if (slot.tower.level >= 4) upgradeCostEl().textContent = 'Máximo';
-}
-function upgradeCostEl() { return document.querySelector('#upgradeCost'); }
-
-function build(type) {
-  if (!selectedSlot || selectedSlot.tower) return;
-  const base = towerTypes[type];
-  if (coins < base.cost) return setMessage('Moedas insuficientes para construir esta defesa.');
-  coins -= base.cost;
-  selectedSlot.tower = { type, level: 1, cooldown: 0 };
-  setMessage(`${base.name} instalado. Prepare-se para os invasores!`);
-  updateHud();
-  selectSlot(selectedSlot);
-}
-
-document.querySelectorAll('[data-build]').forEach((button) => button.addEventListener('click', () => build(button.dataset.build)));
-upgradeBtn.addEventListener('click', () => {
-  if (!selectedSlot?.tower || selectedSlot.tower.level >= 4) return;
-  const cost = upgradeCost(selectedSlot.tower);
-  if (coins < cost) return setMessage('Você precisa de mais moedas para esta melhoria.');
-  coins -= cost;
-  selectedSlot.tower.level += 1;
-  setMessage('Arma melhorada! Alcance e poder de ataque aumentaram.');
-  updateHud();
-  selectSlot(selectedSlot);
-});
-sellBtn.addEventListener('click', () => {
-  if (!selectedSlot?.tower) return;
-  coins += sellValue(selectedSlot.tower);
-  selectedSlot.tower = null;
-  setMessage('Defesa vendida. Escolha uma nova estratégia para este campo.');
-  updateHud();
-  selectSlot(selectedSlot);
-});
-
-function makeEnemy(index) {
-  const hp = 40 + wave * 17 + index * 2;
-  const armored = wave >= 4 && index % 4 === 0;
-  return { x: path[0].x, y: path[0].y, waypoint: 1, hp: armored ? hp * 1.75 : hp, maxHp: armored ? hp * 1.75 : hp, speed: 0.85 + wave * .09, reward: armored ? 24 : 13, armored };
-}
-
-function beginWave() {
-  if (activeWave || ended || wave >= maxWaves) return;
-  wave += 1;
-  activeWave = true;
-  spawnQueue = Array.from({ length: 5 + wave * 2 }, (_, index) => makeEnemy(index));
-  spawnTimer = 0;
-  waveBtn.disabled = true;
-  waveBtn.textContent = 'Onda em andamento...';
-  setMessage(`Onda ${wave}: ${spawnQueue.length} criaturas se aproximam pela trilha!`);
-  updateHud();
-}
-waveBtn.addEventListener('click', beginWave);
-
-function distance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
-function moveEnemies() {
-  for (const enemy of enemies) {
-    const target = path[enemy.waypoint];
-    const angle = Math.atan2(target.y - enemy.y, target.x - enemy.x);
-    enemy.x += Math.cos(angle) * enemy.speed;
-    enemy.y += Math.sin(angle) * enemy.speed;
-    if (distance(enemy, target) < 4) enemy.waypoint += 1;
-    if (enemy.waypoint >= path.length) enemy.escaped = true;
-  }
-  const escaped = enemies.filter((enemy) => enemy.escaped);
-  if (escaped.length) {
-    lives = Math.max(0, lives - escaped.length);
-    setMessage(`${escaped.length} criatura(s) alcançaram o cristal!`);
-    updateHud();
-  }
-  enemies = enemies.filter((enemy) => !enemy.escaped);
-}
-
-function fireTowers() {
-  for (const slot of slots) {
-    if (!slot.tower) continue;
-    slot.tower.cooldown -= 1;
-    const stats = towerStats(slot.tower);
-    if (slot.tower.cooldown > 0) continue;
-    const targets = enemies.filter((enemy) => distance(slot, enemy) <= stats.range);
-    const target = targets.sort((a, b) => b.waypoint - a.waypoint)[0];
-    if (!target) continue;
-    slot.tower.cooldown = stats.rate;
-    projectiles.push({ x: slot.x, y: slot.y, target, damage: stats.damage, color: stats.color, type: slot.tower.type, speed: slot.tower.type === 'cannon' ? 5 : 8 });
-  }
-}
-
-function moveProjectiles() {
-  for (const shot of projectiles) {
-    if (!enemies.includes(shot.target)) { shot.done = true; continue; }
-    const angle = Math.atan2(shot.target.y - shot.y, shot.target.x - shot.x);
-    shot.x += Math.cos(angle) * shot.speed;
-    shot.y += Math.sin(angle) * shot.speed;
-    if (distance(shot, shot.target) < 9) {
-      shot.target.hp -= shot.damage;
-      shot.done = true;
-      if (shot.target.hp <= 0) {
-        coins += shot.target.reward;
-        enemies = enemies.filter((enemy) => enemy !== shot.target);
-        updateHud();
-      }
-    }
-  }
-  projectiles = projectiles.filter((shot) => !shot.done);
-}
-
-function update() {
-  if (ended) return;
-  if (activeWave && spawnQueue.length) {
-    spawnTimer -= 1;
-    if (spawnTimer <= 0) {
-      enemies.push(spawnQueue.shift());
-      spawnTimer = Math.max(26, 68 - wave * 3);
-    }
-  }
-  moveEnemies();
-  fireTowers();
-  moveProjectiles();
-  if (lives <= 0) {
-    ended = true;
-    setMessage('O cristal caiu. Recarregue a página e tente uma nova estratégia.');
-    waveBtn.textContent = 'Reino derrotado';
-    waveBtn.disabled = true;
-  } else if (activeWave && !spawnQueue.length && !enemies.length) {
-    activeWave = false;
-    if (wave === maxWaves) {
-      ended = true;
-      setMessage('Vitória! O reino sobreviveu a todas as invasões.');
-      waveBtn.textContent = 'Reino protegido!';
-    } else {
-      coins += 30 + wave * 5;
-      updateHud();
-      setMessage(`Onda vencida! Bônus recebido. Melhore suas defesas antes da próxima.`);
-      waveBtn.textContent = `Iniciar onda ${wave + 1}`;
-      waveBtn.disabled = false;
-    }
-  }
-}
-function drawMap() {
-  const bg = ctx.createLinearGradient(0, 0, 960, 600);
-  bg.addColorStop(0, '#244f43'); bg.addColorStop(1, '#132f35');
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, 960, 600);
-  ctx.globalAlpha = .16;
-  for (let x = 18; x < 960; x += 45) for (let y = 18; y < 600; y += 45) {
-    ctx.fillStyle = (x + y) % 90 ? '#b5e298' : '#76c58e';
-    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.strokeStyle = '#7f603f'; ctx.lineWidth = 54; ctx.beginPath();
-  path.forEach((point, i) => i ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.stroke();
-  ctx.strokeStyle = '#b98f62'; ctx.lineWidth = 42; ctx.stroke();
-  ctx.strokeStyle = 'rgba(255,230,174,.26)'; ctx.lineWidth = 3; ctx.setLineDash([12, 13]); ctx.stroke(); ctx.setLineDash([]);
-  // final crystal keep
-  ctx.fillStyle = '#5e507a'; ctx.fillRect(910, 334, 46, 86);
-  ctx.fillStyle = '#a597c5'; ctx.fillRect(904, 328, 16, 22); ctx.fillRect(932, 328, 16, 22); ctx.fillRect(948, 328, 16, 22);
-  ctx.fillStyle = '#77e8ff'; ctx.beginPath(); ctx.moveTo(930,350); ctx.lineTo(946,371); ctx.lineTo(930,398); ctx.lineTo(914,371); ctx.closePath(); ctx.fill();
-}
-
-function drawSlots() {
-  for (const slot of slots) {
-    const active = slot === selectedSlot;
-    ctx.fillStyle = slot.tower ? '#2d594c' : 'rgba(190,229,215,.14)';
-    ctx.strokeStyle = active ? '#fff6a8' : '#bce5d7'; ctx.lineWidth = active ? 4 : 2;
-    ctx.beginPath(); ctx.arc(slot.x, slot.y, 27, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    if (!slot.tower) {
-      ctx.fillStyle = 'rgba(255,255,255,.66)'; ctx.font = '700 25px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('+', slot.x, slot.y + 9);
-      continue;
-    }
-    const stats = towerStats(slot.tower);
-    ctx.fillStyle = stats.color; ctx.beginPath(); ctx.arc(slot.x, slot.y, 18, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = '18px sans-serif'; ctx.fillText(stats.icon, slot.x, slot.y + 7);
-    ctx.fillStyle = '#ffe571'; ctx.font = '700 10px sans-serif'; ctx.fillText(`N${slot.tower.level}`, slot.x, slot.y + 43);
-    if (active) { ctx.strokeStyle = 'rgba(255,246,168,.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(slot.x, slot.y, stats.range, 0, Math.PI * 2); ctx.stroke(); }
-  }
-}
-
-function drawEnemies() {
-  for (const enemy of enemies) {
-    ctx.fillStyle = enemy.armored ? '#8f7fff' : '#ff657c'; ctx.strokeStyle = enemy.armored ? '#d8d1ff' : '#ffc3ce'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.armored ? 15 : 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#152531'; ctx.fillRect(enemy.x - 16, enemy.y - 23, 32, 4);
-    ctx.fillStyle = '#72ff94'; ctx.fillRect(enemy.x - 16, enemy.y - 23, 32 * Math.max(0, enemy.hp / enemy.maxHp), 4);
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(enemy.x - 4, enemy.y - 2, 2, 0, Math.PI * 2); ctx.arc(enemy.x + 4, enemy.y - 2, 2, 0, Math.PI * 2); ctx.fill();
-  }
-}
-function drawShots() { for (const shot of projectiles) { ctx.fillStyle = shot.color; ctx.beginPath(); ctx.arc(shot.x, shot.y, shot.type === 'cannon' ? 6 : 4, 0, Math.PI * 2); ctx.fill(); } }
-function draw() { drawMap(); drawSlots(); drawEnemies(); drawShots(); }
-function loop() { update(); draw(); requestAnimationFrame(loop); }
-
-canvas.addEventListener('click', (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const point = { x: (event.clientX - rect.left) * canvas.width / rect.width, y: (event.clientY - rect.top) * canvas.height / rect.height };
-  const slot = slots.find((candidate) => distance(candidate, point) <= 35);
-  if (slot) selectSlot(slot);
-});
-
-updateHud();
-requestAnimationFrame(loop);
+const canvas=document.querySelector('#defenseGame'),ctx=canvas.getContext('2d');
+const ui={coins:document.querySelector('#coins'),lives:document.querySelector('#lives'),wave:document.querySelector('#wave'),count:document.querySelector('#enemyCount'),waveBtn:document.querySelector('#waveBtn'),message:document.querySelector('#message'),title:document.querySelector('#panelTitle'),text:document.querySelector('#panelText'),speed:document.querySelector('#speedLabel'),sound:document.querySelector('#soundBtn')};
+const path=[{x:-35,y:142},{x:155,y:142},{x:155,y:310},{x:355,y:310},{x:355,y:514},{x:584,y:514},{x:584,y:255},{x:800,y:255},{x:800,y:440},{x:1010,y:440},{x:1140,y:440}];
+const slots=[{x:74,y:245},{x:254,y:205},{x:265,y:407},{x:460,y:405},{x:472,y:592},{x:686,y:380},{x:690,y:152},{x:905,y:340},{x:910,y:545},{x:1010,y:265}];
+const types={archer:{name:'Arqueiro',icon:'🏹',cost:65,color:'#68e58d',range:155,damage:15,rate:30,shot:8},cannon:{name:'Canhão',icon:'💣',cost:115,color:'#ffb45e',range:137,damage:43,rate:76,shot:5,splash:54},magic:{name:'Torre mágica',icon:'🔮',cost:145,color:'#bf82ff',range:170,damage:55,rate:58,shot:7},frost:{name:'Torre de gelo',icon:'❄️',cost:100,color:'#79e7ff',range:145,damage:8,rate:45,shot:6,slow:.55}};
+const decorations=Array.from({length:74},(_,i)=>({x:(i*83+31)%1080,y:(i*137+46)%650,size:3+(i%4),kind:i%5}));
+let coins=260,lives=30,wave=0,speed=1,enemies=[],spawners=[],shots=[],particles=[],bursts=[],menu=null,ended=false,soundOn=true,audio;
+const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+function stats(tower){const base=types[tower.type],scale=1+(tower.level-1)*.48;return {...base,damage:Math.round(base.damage*scale),range:base.range+(tower.level-1)*12,rate:Math.max(15,base.rate-(tower.level-1)*4)}}
+function upgradeCost(tower){return Math.round(types[tower.type].cost*(.72+tower.level*.43))}function sellValue(tower){return Math.round((types[tower.type].cost+(tower.level-1)*upgradeCost(tower))*.62)}
+function updateHud(){ui.coins.textContent=coins;ui.lives.textContent=lives;ui.wave.textContent=wave;ui.count.textContent=enemies.length+spawners.reduce((sum,s)=>sum+s.left,0);ui.waveBtn.textContent=`▶ Próxima onda ${wave+1}`;ui.waveBtn.disabled=ended}
+function say(text){ui.message.textContent=text}
+function tone(freq=440,duration=.06,kind='sine',volume=.045){if(!soundOn)return;audio??=new AudioContext();const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type=kind;oscillator.frequency.value=freq;gain.gain.setValueAtTime(volume,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);oscillator.connect(gain).connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+duration)}
+function makeEnemy(index,currentWave,boss=false){const hp=(56+currentWave*24+index*2)*(boss?8:1),armored=!boss&&currentWave>=4&&index%5===0;return{x:path[0].x,y:path[0].y,waypoint:1,hp:armored?hp*1.5:hp,maxHp:armored?hp*1.5:hp,speed:.82+currentWave*.055+(index%3)*.025,reward:boss?150:armored?25:14,boss,armored,slow:1,slowTimer:0,phase:index*.7}}
+function nextWave(){if(ended)return;wave++;const boss=wave%5===0,count=6+wave*2;spawners.push({left:count+(boss?1:0),timer:0,interval:Math.max(16,46-wave),wave,bossPending:boss});say(boss?`⚠️ Onda ${wave}: um chefe está vindo com seus aliados!`:`Onda ${wave} liberada. Novos inimigos entraram na trilha!`);tone(boss?125:280,.18,'sawtooth',.07);updateHud()}
+function spawnEnemies(){for(const spawner of spawners){spawner.timer--;if(spawner.timer>0||!spawner.left)continue;const boss=spawner.bossPending&&spawner.left===1;enemies.push(makeEnemy(spawner.left,spawner.wave,boss));spawner.left--;spawner.timer=spawner.interval}spawners=spawners.filter(s=>s.left>0)}
+function kill(enemy){if(enemy.dead)return;enemy.dead=true;coins+=enemy.reward;burst(enemy.x,enemy.y,enemy.boss?'#ffe270':'#ff766c',enemy.boss?30:12);tone(enemy.boss?105:520,.08,enemy.boss?'sawtooth':'triangle');updateHud()}
+function moveEnemies(){for(const enemy of enemies){if(enemy.dead)continue;if(enemy.slowTimer>0){enemy.slowTimer--;enemy.slow=Math.min(enemy.slow,.58)}else enemy.slow=1;const target=path[enemy.waypoint],angle=Math.atan2(target.y-enemy.y,target.x-enemy.x),step=enemy.speed*enemy.slow;enemy.x+=Math.cos(angle)*step;enemy.y+=Math.sin(angle)*step;enemy.phase+=.11;if(distance(enemy,target)<4)enemy.waypoint++;if(enemy.waypoint>=path.length){enemy.dead=true;lives=Math.max(0,lives-(enemy.boss?8:1));tone(80,.2,'square',.08);say(enemy.boss?'O chefe atingiu a base! Dano crítico.':'Um invasor alcançou a base!');updateHud()}}enemies=enemies.filter(e=>!e.dead)}
+function fireTowers(){for(const slot of slots){if(!slot.tower)continue;slot.tower.cooldown--;const data=stats(slot.tower);if(slot.tower.cooldown>0)continue;const target=enemies.filter(e=>!e.dead&&distance(slot,e)<=data.range).sort((a,b)=>b.waypoint-a.waypoint||distance(slot,a)-distance(slot,b))[0];if(!target)continue;slot.tower.cooldown=data.rate;shots.push({x:slot.x,y:slot.y,target,data,type:slot.tower.type});tone(slot.tower.type==='cannon'?160:slot.tower.type==='magic'?650:slot.tower.type==='frost'?780:390,.045,slot.tower.type==='cannon'?'square':'sine',.022)}}
+function hit(shot){const target=shot.target;if(!target||target.dead)return;if(shot.data.splash){for(const enemy of enemies)if(!enemy.dead&&distance(target,enemy)<=shot.data.splash){enemy.hp-=shot.data.damage;burst(enemy.x,enemy.y,'#ffb45e',6);if(enemy.hp<=0)kill(enemy)}}else{target.hp-=shot.data.damage;if(shot.data.slow){target.slowTimer=145;target.slow=shot.data.slow}burst(target.x,target.y,shot.data.color,shot.type==='magic'?12:5);if(target.hp<=0)kill(target)}}
+function moveShots(){for(const shot of shots){if(!shot.target||shot.target.dead){shot.dead=true;continue}const angle=Math.atan2(shot.target.y-shot.y,shot.target.x-shot.x);shot.x+=Math.cos(angle)*shot.data.shot;shot.y+=Math.sin(angle)*shot.data.shot;particles.push({x:shot.x,y:shot.y,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,life:12,color:shot.data.color,size:shot.type==='cannon'?3:2});if(distance(shot,shot.target)<10){hit(shot);shot.dead=true}}shots=shots.filter(s=>!s.dead)}
+function burst(x,y,color,count){bursts.push({x,y,r:3,life:16,color});for(let i=0;i<count;i++){const angle=Math.random()*Math.PI*2,power=1+Math.random()*3;particles.push({x,y,vx:Math.cos(angle)*power,vy:Math.sin(angle)*power,life:18+Math.random()*18,color,size:2+Math.random()*3})}}
+function moveEffects(){for(const p of particles){p.x+=p.vx;p.y+=p.vy;p.vy+=.025;p.life--}particles=particles.filter(p=>p.life>0);for(const b of bursts){b.r+=3;b.life--}bursts=bursts.filter(b=>b.life>0)}
+function update(){if(ended)return;for(let i=0;i<speed;i++){spawnEnemies();moveEnemies();fireTowers();moveShots();moveEffects()}if(lives<=0){ended=true;menu=null;say('A base caiu. Atualize a página para tentar uma nova estratégia.');ui.title.textContent='Reino derrotado';updateHud()}}
+function drawMap(){const bg=ctx.createLinearGradient(0,0,1100,680);bg.addColorStop(0,'#315e45');bg.addColorStop(1,'#183b3c');ctx.fillStyle=bg;ctx.fillRect(0,0,1100,680);for(const d of decorations){ctx.fillStyle=d.kind<3?'rgba(178,226,122,.26)':'rgba(29,87,59,.55)';ctx.beginPath();ctx.arc(d.x,d.y,d.size,0,Math.PI*2);ctx.fill();if(d.kind===4){ctx.fillStyle='rgba(16,61,48,.7)';ctx.fillRect(d.x-1,d.y,2,9)}}ctx.lineCap='round';ctx.lineJoin='round';drawPath('#60472f',68);drawPath('#987245',58);drawPath('#c49a62',46);ctx.strokeStyle='rgba(255,232,181,.23)';ctx.lineWidth=3;ctx.setLineDash([15,15]);tracePath();ctx.stroke();ctx.setLineDash([]);drawWater();drawBase()}
+function tracePath(){ctx.beginPath();path.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}function drawPath(color,width){ctx.strokeStyle=color;ctx.lineWidth=width;tracePath();ctx.stroke()}
+function drawWater(){ctx.fillStyle='rgba(71,175,187,.5)';ctx.beginPath();ctx.moveTo(0,600);ctx.bezierCurveTo(210,545,360,680,560,625);ctx.bezierCurveTo(790,568,900,680,1100,612);ctx.lineTo(1100,680);ctx.lineTo(0,680);ctx.fill();ctx.strokeStyle='rgba(171,242,232,.3)';ctx.lineWidth=3;for(let x=10;x<1080;x+=72){ctx.beginPath();ctx.moveTo(x,638+(x%4)*4);ctx.lineTo(x+36,638+(x%4)*4);ctx.stroke()}}
+function drawBase(){ctx.fillStyle='#594d72';ctx.fillRect(1025,374,58,106);ctx.fillStyle='#9385b8';for(const x of [1018,1040,1062]){ctx.fillRect(x,362,22,30);ctx.fillRect(x+3,352,6,13);ctx.fillRect(x+13,352,6,13)}ctx.fillStyle='#72eaff';ctx.shadowColor='#72eaff';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(1053,388);ctx.lineTo(1071,416);ctx.lineTo(1053,452);ctx.lineTo(1035,416);ctx.closePath();ctx.fill();ctx.shadowBlur=0}
+function drawSlots(){for(const slot of slots){const selected=menu?.slot===slot;ctx.fillStyle=slot.tower?'#31564b':'rgba(218,249,217,.13)';ctx.strokeStyle=selected?'#ffe27b':'#d5f1d8';ctx.lineWidth=selected?4:2;ctx.beginPath();ctx.arc(slot.x,slot.y,28,0,Math.PI*2);ctx.fill();ctx.stroke();if(slot.tower)drawTower(slot);else{ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='800 25px sans-serif';ctx.textAlign='center';ctx.fillText('+',slot.x,slot.y+9)}}}
+function drawTower(slot){const data=stats(slot.tower);ctx.fillStyle='#624f42';ctx.fillRect(slot.x-10,slot.y+10,20,17);ctx.fillStyle=data.color;ctx.shadowColor=data.color;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(slot.x,slot.y,17,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font='17px sans-serif';ctx.textAlign='center';ctx.fillText(data.icon,slot.x,slot.y+6);ctx.fillStyle='#ffe37d';ctx.font='900 10px sans-serif';ctx.fillText(`N${slot.tower.level}`,slot.x,slot.y+43)}
+function drawEnemies(){for(const e of enemies){const bob=Math.sin(e.phase)*3,r=e.boss?25:e.armored?16:13;ctx.fillStyle=e.boss?'#df5e49':e.armored?'#8b83e8':'#e96761';ctx.strokeStyle=e.slow<1?'#a4f6ff':e.boss?'#ffc76a':'#ffc0ad';ctx.lineWidth=e.boss?4:2;ctx.beginPath();ctx.arc(e.x,e.y+bob,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(e.x-5,e.y+bob-3,2.5,0,Math.PI*2);ctx.arc(e.x+5,e.y+bob-3,2.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#18252e';ctx.fillRect(e.x-r,e.y+bob-r-12,r*2,5);ctx.fillStyle=e.hp/e.maxHp>.45?'#69f18a':'#ff6a63';ctx.fillRect(e.x-r,e.y+bob-r-12,r*2*clamp(e.hp/e.maxHp,0,1),5);if(e.boss){ctx.fillStyle='#ffe279';ctx.font='900 12px sans-serif';ctx.textAlign='center';ctx.fillText('CHEFE',e.x,e.y+bob-r-18)}}}
+function drawEffects(){for(const p of particles){ctx.globalAlpha=clamp(p.life/18,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;for(const b of bursts){ctx.globalAlpha=b.life/16;ctx.strokeStyle=b.color;ctx.lineWidth=3;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;for(const shot of shots){ctx.fillStyle=shot.data.color;ctx.shadowColor=shot.data.color;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(shot.x,shot.y,shot.type==='cannon'?6:4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}}
+const buildItems=[['archer',-112,-55],['cannon',0,-94],['magic',112,-55],['frost',112,55],['cancel',0,94]];
+function radialItems(){if(!menu)return[];const {slot,mode}=menu;if(mode==='build')return buildItems.map(([action,dx,dy])=>({action,x:slot.x+dx,y:slot.y+dy}));return[{action:'upgrade',x:slot.x-105,y:slot.y-58},{action:'info',x:slot.x,y:slot.y-102},{action:'sell',x:slot.x+105,y:slot.y-58},{action:'cancel',x:slot.x,y:slot.y+98}]}
+function drawMenu(){if(!menu)return;const data=menu.slot.tower?stats(menu.slot.tower):null;ctx.fillStyle='rgba(4,15,17,.74)';ctx.beginPath();ctx.arc(menu.slot.x,menu.slot.y,menu.mode==='build'?142:136,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(222,255,231,.28)';ctx.lineWidth=2;ctx.stroke();for(const item of radialItems()){const type=types[item.action],disabled=type&&coins<type.cost;ctx.fillStyle=disabled?'#4b5455':item.action==='cancel'?'#a94f54':item.action==='sell'?'#bc763f':item.action==='upgrade'?'#3e91cf':item.action==='info'?'#6875b7':'#32684f';ctx.beginPath();ctx.arc(item.x,item.y,30,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e7f8e9';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='18px sans-serif';ctx.fillText(type?.icon||({cancel:'✕',upgrade:'⬆',sell:'💰',info:'ⓘ'}[item.action]),item.x,item.y+5);ctx.font='900 9px sans-serif';ctx.fillText(type?`${type.cost} 💰`:item.action==='upgrade'?`${upgradeCost(menu.slot.tower)} 💰`:item.action==='sell'?`+${sellValue(menu.slot.tower)} 💰`:item.action==='info'?'INFO':'FECHAR',item.x,item.y+46)}if(data){ctx.fillStyle='#fff';ctx.font='900 12px sans-serif';ctx.fillText(`${data.name} N${menu.slot.tower.level}`,menu.slot.x,menu.slot.y-7);ctx.font='11px sans-serif';ctx.fillStyle='#d6ebdf';ctx.fillText(`Dano ${data.damage} • Alcance ${data.range}`,menu.slot.x,menu.slot.y+11)}}
+function draw(){drawMap();drawSlots();drawEnemies();drawEffects();drawMenu()}
+function loop(){update();draw();requestAnimationFrame(loop)}
+function clickMenu(point){const item=radialItems().find(i=>distance(i,point)<=35);if(!item)return false;const slot=menu.slot;if(item.action==='cancel'){menu=null;return true}if(types[item.action]){const data=types[item.action];if(coins<data.cost){say('Moedas insuficientes para construir esta torre.');tone(95,.1,'square');return true}coins-=data.cost;slot.tower={type:item.action,level:1,cooldown:0};say(`${data.name} construída. Clique nela para melhorar ou vender.`);tone(460,.1,'triangle');menu=null;updateHud();return true}if(item.action==='upgrade'){const cost=upgradeCost(slot.tower);if(slot.tower.level>=5)return say('Esta torre já atingiu o nível máximo.'),true;if(coins<cost)return say('Moedas insuficientes para melhorar esta torre.'),true;coins-=cost;slot.tower.level++;say(`${types[slot.tower.type].name} melhorada para o nível ${slot.tower.level}!`);tone(700,.14,'triangle');menu=null;updateHud();return true}if(item.action==='sell'){coins+=sellValue(slot.tower);say('Torre vendida. O campo está livre para uma nova estratégia.');slot.tower=null;menu=null;tone(360,.1);updateHud();return true}if(item.action==='info'){const data=stats(slot.tower);ui.title.textContent=`${data.icon} ${data.name} • Nível ${slot.tower.level}`;ui.text.textContent=`Dano ${data.damage}, alcance ${data.range}, intervalo ${data.rate}. ${data.splash?'Explode grupos próximos.':data.slow?'Desacelera inimigos atingidos.':'Ataca o inimigo mais avançado.'}`;return true}return false}
+canvas.addEventListener('click',event=>{if(ended)return;audio??=new AudioContext();const rect=canvas.getBoundingClientRect(),point={x:(event.clientX-rect.left)*canvas.width/rect.width,y:(event.clientY-rect.top)*canvas.height/rect.height};if(menu&&clickMenu(point))return;const slot=slots.find(s=>distance(s,point)<=36);if(slot){menu={slot,mode:slot.tower?'tower':'build'};ui.title.textContent=slot.tower?`${types[slot.tower.type].icon} ${types[slot.tower.type].name}`:'Construir torre';ui.text.textContent=slot.tower?'Use o menu dentro do mapa para melhorar, vender ou conferir informações.':'Escolha uma defesa no menu radial dentro do mapa.'}else menu=null});
+ui.waveBtn.addEventListener('click',nextWave);document.querySelectorAll('[data-speed]').forEach(button=>button.addEventListener('click',()=>{speed=Number(button.dataset.speed);ui.speed.textContent=`${speed}x`;document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('active',b===button));tone(300+speed*100,.06)}));ui.sound.addEventListener('click',()=>{soundOn=!soundOn;ui.sound.textContent=soundOn?'🔊 Som ligado':'🔇 Som desligado'});
+updateHud();requestAnimationFrame(loop);
