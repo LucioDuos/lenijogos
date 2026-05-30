@@ -3,65 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fogo e Água: Templo dos Desafios</title>
+    <title>Leni Jogos</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <main class="shell">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Cooperação • Plataforma • Obstáculos</p>
-          <h1>Fogo e Água: Templo dos Desafios</h1>
-          <p class="intro">
-            Controle dois guardiões ao mesmo tempo, evite poças perigosas,
-            acione alavancas, colete cristais e leve cada herói ao seu portal.
-          </p>
-        </div>
-        <div class="scoreboard" aria-live="polite">
-          <span id="levelLabel">Fase 1</span>
-          <strong id="statusText">Colete os cristais e encontre as portas!</strong>
-          <button id="restartBtn" type="button">Reiniciar fase</button>
-        </div>
-      </section>
+  <body class="menu-page">
+    <main class="shell menu-shell">
+      <header class="menu-header">
+        <p class="eyebrow">Escolha sua aventura</p>
+        <h1>Leni <span>Jogos</span></h1>
+        <p class="intro">Dois mundos, dois desafios. Jogue em dupla no templo elemental ou proteja o reino em uma batalha estratégica.</p>
+      </header>
 
-      <section class="game-card" aria-label="Área do jogo">
-        <canvas id="game" width="960" height="540"></canvas>
-        <div class="touch-controls" aria-label="Controles por toque">
-          <div class="touch-panel fire-panel">
-            <span>Fogo</span>
-            <button data-control="fire:left" aria-label="Fogo esquerda">◀</button>
-            <button data-control="fire:jump" aria-label="Fogo pular">▲</button>
-            <button data-control="fire:right" aria-label="Fogo direita">▶</button>
+      <section class="game-grid" aria-label="Jogos disponíveis">
+        <article class="game-option fire-water-card">
+          <div class="game-art" aria-hidden="true">
+            <span class="art-orb fire-orb">🔥</span>
+            <span class="versus">+</span>
+            <span class="art-orb water-orb">💧</span>
           </div>
-          <div class="touch-panel water-panel">
-            <span>Água</span>
-            <button data-control="water:left" aria-label="Água esquerda">A</button>
-            <button data-control="water:jump" aria-label="Água pular">W</button>
-            <button data-control="water:right" aria-label="Água direita">D</button>
+          <div class="game-content">
+            <span class="genre">Cooperação • Plataforma</span>
+            <h2>Fogo e Água</h2>
+            <p>Supere obstáculos elementais, recolha cristais e leve os dois guardiões aos portais do templo.</p>
+            <a class="play-link" href="lava.html">Jogar agora <span>→</span></a>
           </div>
-        </div>
-      </section>
-
-      <section class="instructions">
-        <article>
-          <h2>Como jogar</h2>
-          <ul>
-            <li><strong>Fogo:</strong> setas ← → para andar e ↑ para pular.</li>
-            <li><strong>Água:</strong> teclas A/D para andar e W para pular.</li>
-            <li>Fogo não pode tocar água. Água não pode tocar lava. Ambos devem evitar gosma verde.</li>
-            <li>Suba nas placas de pressão para abrir portões e use as plataformas móveis com cuidado.</li>
-          </ul>
         </article>
-        <article>
-          <h2>Objetivo</h2>
-          <p>
-            Pegue todos os cristais de cada elemento e posicione Fogo e Água nos portais corretos para avançar.
-            São três fases com dificuldade crescente.
-          </p>
+
+        <article class="game-option defense-card">
+          <div class="game-art defense-art" aria-hidden="true">
+            <span class="tower-icon">🏰</span>
+            <span class="path-line"></span>
+            <span class="enemy-dot enemy-one"></span>
+            <span class="enemy-dot enemy-two"></span>
+            <span class="enemy-dot enemy-three"></span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Estratégia • Sobrevivência</span>
+            <h2>Guardiões da Trilha</h2>
+            <p>Posicione armas, melhore suas defesas e impeça as criaturas de invadir a torre final.</p>
+            <a class="play-link defense-link" href="tower-defense.html">Defender reino <span>→</span></a>
+          </div>
         </article>
       </section>
+
+      <footer class="menu-footer">
+        <span>🎮</span>
+        <p>Novos desafios serão adicionados em breve.</p>
+      </footer>
     </main>
-
-    <script src="game.js"></script>
   </body>
 </html>

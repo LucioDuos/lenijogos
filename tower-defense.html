@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guardiões da Trilha • Leni Jogos</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="tower-defense.css" />
+  </head>
+  <body class="defense-page">
+    <main class="defense-shell">
+      <header class="defense-header">
+        <div>
+          <a class="back-link" href="index.html">← Voltar para os jogos</a>
+          <p class="eyebrow">Estratégia • Sobrevivência</p>
+          <h1>Guardiões da Trilha</h1>
+          <p class="intro">Construa defesas nos campos demarcados, elimine invasores e proteja o cristal do reino.</p>
+        </div>
+        <div class="defense-stats" aria-live="polite">
+          <div><span>💰 Moedas</span><strong id="coins">180</strong></div>
+          <div><span>💎 Cristal</span><strong id="lives">20</strong></div>
+          <div><span>⚔️ Onda</span><strong id="wave">0 / 8</strong></div>
+        </div>
+      </header>
+
+      <section class="defense-layout">
+        <div class="board-card">
+          <canvas id="defenseGame" width="960" height="600" aria-label="Mapa do jogo Guardiões da Trilha"></canvas>
+          <div class="board-caption">
+            <span><i class="legend-slot"></i> Clique em um campo para construir</span>
+            <span><i class="legend-path"></i> Trilha dos inimigos</span>
+          </div>
+        </div>
+
+        <aside class="defense-panel">
+          <div>
+            <p class="panel-kicker">Quartel de defesa</p>
+            <h2 id="panelTitle">Escolha um campo</h2>
+            <p id="panelText">Clique em um círculo vazio no mapa para instalar uma arma.</p>
+          </div>
+          <div id="buildOptions" class="build-options" hidden>
+            <button class="tower-choice" data-build="archer">
+              <span class="choice-icon">🏹</span><span><b>Arqueiro</b><small>Rápido • 70 moedas</small></span>
+            </button>
+            <button class="tower-choice" data-build="cannon">
+              <span class="choice-icon">💣</span><span><b>Canhão</b><small>Forte • 110 moedas</small></span>
+            </button>
+          </div>
+          <div id="upgradeOptions" class="upgrade-options" hidden>
+            <div class="selected-tower"><span id="towerIcon">🏹</span><div><b id="towerName">Arqueiro</b><small id="towerLevel">Nível 1</small></div></div>
+            <button id="upgradeBtn">Melhorar arma <span id="upgradeCost">90 moedas</span></button>
+            <button id="sellBtn" class="secondary-btn">Vender defesa <span id="sellValue">+35 moedas</span></button>
+          </div>
+          <div class="wave-box">
+            <button id="waveBtn" class="wave-button">Iniciar primeira onda</button>
+            <p id="message">Prepare sua estratégia antes de liberar os inimigos.</p>
+          </div>
+          <div class="tips">
+            <h3>Como defender</h3>
+            <ul>
+              <li>Construa apenas nos campos circulares.</li>
+              <li>Cada inimigo derrotado concede moedas.</li>
+              <li>Melhore armas existentes para causar mais dano.</li>
+              <li>Não deixe as criaturas alcançarem o cristal.</li>
+            </ul>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script src="tower-defense.js"></script>
+  </body>
+</html>

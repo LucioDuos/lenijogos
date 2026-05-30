@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fogo e Água: Templo dos Desafios</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <a class="back-link" href="index.html">← Voltar para os jogos</a>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Cooperação • Plataforma • Obstáculos</p>
+          <h1>Fogo e Água: Templo dos Desafios</h1>
+          <p class="intro">
+            Controle dois guardiões ao mesmo tempo, evite poças perigosas,
+            acione alavancas, colete cristais e leve cada herói ao seu portal.
+          </p>
+        </div>
+        <div class="scoreboard" aria-live="polite">
+          <span id="levelLabel">Fase 1</span>
+          <strong id="statusText">Colete os cristais e encontre as portas!</strong>
+          <button id="restartBtn" type="button">Reiniciar fase</button>
+        </div>
+      </section>
+
+      <section class="game-card" aria-label="Área do jogo">
+        <canvas id="game" width="960" height="540"></canvas>
+        <div class="touch-controls" aria-label="Controles por toque">
+          <div class="touch-panel fire-panel">
+            <span>Fogo</span>
+            <button data-control="fire:left" aria-label="Fogo esquerda">◀</button>
+            <button data-control="fire:jump" aria-label="Fogo pular">▲</button>
+            <button data-control="fire:right" aria-label="Fogo direita">▶</button>
+          </div>
+          <div class="touch-panel water-panel">
+            <span>Água</span>
+            <button data-control="water:left" aria-label="Água esquerda">A</button>
+            <button data-control="water:jump" aria-label="Água pular">W</button>
+            <button data-control="water:right" aria-label="Água direita">D</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="instructions">
+        <article>
+          <h2>Como jogar</h2>
+          <ul>
+            <li><strong>Fogo:</strong> setas ← → para andar e ↑ para pular.</li>
+            <li><strong>Água:</strong> teclas A/D para andar e W para pular.</li>
+            <li>Fogo não pode tocar água. Água não pode tocar lava. Ambos devem evitar gosma verde.</li>
+            <li>Suba nas placas de pressão para abrir portões e use as plataformas móveis com cuidado.</li>
+          </ul>
+        </article>
+        <article>
+          <h2>Objetivo</h2>
+          <p>
+            Pegue todos os cristais de cada elemento e posicione Fogo e Água nos portais corretos para avançar.
+            São três fases com dificuldade crescente.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
