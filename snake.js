@@ -43,7 +43,7 @@ function tick() {
   snake.unshift(head);
   if (head.x === food.x && head.y === food.y) {
     score += 10; scoreEl.textContent = score; food = randomFood();
-    if (score > best) { best = score; bestEl.textContent = best; localStorage.setItem('leni-snake-best', best); }
+    if (score > best) { best = score; bestEl.textContent = best; localStorage.setItem('leni-snake-best', best); window.LeniJogos?.saveProgress('cobrinha',{best}); }
   } else snake.pop();
   draw(); schedule();
 }

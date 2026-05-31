@@ -13,7 +13,7 @@
       <a class="back-link" href="index.html">← Voltar para os jogos</a>
       <p class="eyebrow">Turnos • Estratégia • Artilharia</p>
       <h1>Worms</h1>
-      <p class="intro">Escolha uma arma, considere o vento e destrua o terreno para vencer a batalha entre capivaras.</p>
+      <p class="intro">Escolha uma arma, considere o vento e destrua o terreno para vencer a batalha entre minhocas.</p>
     </header>
 
     <section class="worms-layout">
@@ -31,9 +31,11 @@
           </div>
           <div class="worms-tools">
             <label class="weapon-picker">🔫 <select id="weaponSelect" aria-label="Selecionar arma"></select></label>
+            <button id="onlineWorms">🌐 Jogar online</button>
             <button id="restartWorms">↻ Reiniciar</button>
             <button id="fullscreenWorms">⛶ Tela cheia</button>
           </div>
+          <div class="online-status" id="onlineStatus">Modo local: dois jogadores no mesmo dispositivo.</div>
           <div class="worms-notice" id="wormsMessage">Time Coral: mova Luma e prepare o disparo.</div>
           <div class="worms-touch" aria-label="Controles touch">
             <button data-worm-control="left">◀</button>
@@ -51,16 +53,18 @@
         <p class="panel-kicker">Como jogar</p>
         <h2>Batalha por turnos</h2>
         <ul>
-          <li><b>A / D</b> movimentam a capivara atual e <b>W</b> executa um pequeno pulo.</li>
+          <li><b>A / D</b> movimentam a minhoca atual e <b>W</b> executa um pequeno pulo.</li>
           <li><b>↑ / ↓</b> ajustam o ângulo da mira.</li>
           <li>Escolha entre nove armas. Segure <b>espaço</b> para carregar e solte para disparar.</li>
           <li>O vento altera a trajetória do projétil.</li>
           <li>A explosão danifica personagens próximos e destrói o terreno.</li>
-          <li>Elimine as três capivaras adversárias para vencer.</li>
+          <li>Elimine as três minhocas adversárias para vencer.</li>
         </ul>
       </aside>
     </section>
   </main>
   <script src="worms.js"></script>
+  <script src="worms-online.js"></script>
+  <script src="portal-client.js"></script>
 </body>
 </html>

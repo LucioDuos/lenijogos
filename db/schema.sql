@@ -1,0 +1,51 @@
+CREATE TABLE users (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  phone VARCHAR(15) NOT NULL UNIQUE,
+  nickname VARCHAR(30) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE user_sessions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_sessions_user (user_id), INDEX idx_sessions_expiration (expires_at),
+  CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE game_progress (
+  user_id BIGINT UNSIGNED NOT NULL,
+  game_key VARCHAR(40) NOT NULL,
+  progress JSON NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, game_key),
+  CONSTRAINT fk_progress_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE game_events (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  game_key VARCHAR(40) NOT NULL,
+  event_type ENUM('open','close','progress','win','loss') NOT NULL,
+  duration_seconds INT UNSIGNED NOT NULL DEFAULT 0,
+  payload JSON NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_events_user_game (user_id, game_key), INDEX idx_events_created (created_at),
+  CONSTRAINT fk_events_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE game_statistics (
+  user_id BIGINT UNSIGNED NOT NULL,
+  game_key VARCHAR(40) NOT NULL,
+  visits INT UNSIGNED NOT NULL DEFAULT 0,
+  seconds_played INT UNSIGNED NOT NULL DEFAULT 0,
+  wins INT UNSIGNED NOT NULL DEFAULT 0,
+  losses INT UNSIGNED NOT NULL DEFAULT 0,
+  last_accessed_at DATETIME NOT NULL,
+  PRIMARY KEY (user_id, game_key),
+  CONSTRAINT fk_statistics_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

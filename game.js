@@ -251,6 +251,7 @@ function checkWin() {
       loadLevel(currentLevel);
       statusText.textContent = 'Portal aberto! Próxima fase.';
       messageTimer = 120;
+      window.LeniJogos?.saveProgress('fogo-agua', { level: currentLevel + 1 });
     }
   } else if ((fireHome || waterHome) && !allCollected && messageTimer <= 0) {
     statusText.textContent = 'Ainda existem cristais espalhados pela fase.';

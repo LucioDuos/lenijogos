@@ -1,55 +1,64 @@
 # Leni Jogos
 
-Um portal de jogos em HTML, CSS e JavaScript. A página inicial permite escolher entre cinco experiências:
+Portal de jogos em HTML, CSS e JavaScript com autenticação PHP, persistência MySQL e suporte WebSocket para partidas online do Worms.
 
-- **Fogo e Água: Templo dos Desafios:** plataforma cooperativa com perigos elementais, cristais, placas, portões e elevadores.
-- **Guardiões da Trilha:** tower defense com mapa detalhado, quatro tipos de torre, melhorias, moedas, ondas sobrepostas, chefes, partículas e controle de velocidade.
-- **Cobrinha Gulosa:** arcade clássico no qual a cobrinha cresce e acelera conforme come frutas.
-- **Mesa de Sequências:** jogo de peças inspirado em Rummikub, com seleção de dificuldade e até três oponentes controlados pelo computador.
-- **Worms:** batalha de artilharia por turnos entre dois times de capivaras, com terreno destrutível, vento, pequenos saltos, nove armas e controles touch.
+## Jogos
 
-## Como executar
+- **Fogo e Água:** plataforma cooperativa com cristais, perigos e portais.
+- **Guardiões da Trilha:** tower defense com torres, melhorias, ondas sobrepostas e chefes.
+- **Cobrinha Gulosa:** arcade clássico com recorde persistente.
+- **Mesa de Sequências:** jogo inspirado em Rummikub com oponentes controlados pelo computador.
+- **Worms:** artilharia por turnos entre times de minhocas com terreno destrutível, obstáculos, salto curto, nove armas e modo online.
 
-Sirva a pasta com um servidor estático:
+## Banco de dados e login
+
+O portal exige cadastro com **celular**, **apelido** e **senha**. O login utiliza celular e senha. As senhas dos jogadores são armazenadas somente como hash por `password_hash()` e os tokens de sessão também são persistidos como hash.
+
+1. Importe `db/schema.sql` no banco MySQL.
+2. Configure as variáveis de ambiente descritas em `.env.example` no servidor PHP.
+3. Não versione senhas reais em `.env` ou em arquivos PHP.
+4. Sirva o diretório usando PHP, por exemplo:
 
 ```bash
-python3 -m http.server 4173
+php -S 127.0.0.1:4173
 ```
 
 Depois acesse `http://127.0.0.1:4173/`.
 
+A API registra progresso por jogo, acessos, tempo de permanência, vitórias, derrotas e ranking agregado. O frontend compartilhado está em `portal-client.js`.
+
+## WebSocket do Worms
+
+O modo online usa tokens temporários assinados pela API. Para iniciar o servidor WebSocket:
+
+```bash
+cd realtime
+npm install
+JOGOS_WS_SECRET='o-mesmo-segredo-configurado-no-PHP' npm start
+```
+
+Em produção, configure `JOGOS_WS_URL` com uma URL `wss://` protegida por TLS.
+
 ## Controles
 
 ### Fogo e Água
-
-- **Fogo:** setas esquerda/direita para andar e seta para cima para pular.
-- **Água:** A/D para andar e W para pular.
-- Em telas menores, use os botões de toque abaixo do canvas.
+- **Fogo:** setas esquerda/direita e seta para cima.
+- **Água:** A/D e W.
 
 ### Guardiões da Trilha
-
-- Clique em um campo circular vazio para abrir o menu radial e construir um arqueiro, canhão, torre mágica ou torre congelante.
-- Clique em uma defesa existente para abrir o menu de melhoria, venda e informações dentro do mapa.
-- Use o botão de próxima onda a qualquer momento: novas criaturas entram mesmo quando já existem inimigos na trilha. Quando todos forem eliminados, a próxima onda começa automaticamente após uma contagem regressiva de cinco segundos.
-- Use os comandos sobre o mapa para iniciar ondas, alternar entre velocidades 1x, 2x e 3x, controlar o som e ativar a tela cheia. Chefes aparecem a cada cinco ondas.
+- Clique nos campos circulares para construir, melhorar ou vender torres.
+- Use próxima onda, velocidades 1x/2x/3x, som e tela cheia sobre o mapa.
+- Após limpar a trilha, uma nova onda começa automaticamente em cinco segundos.
 
 ### Cobrinha Gulosa
-
-- Use as setas ou as teclas WASD para mudar de direção.
-- Em telas sensíveis ao toque, use os botões direcionais ao lado do tabuleiro.
+- Use as setas ou WASD. No mobile, use os botões direcionais.
 
 ### Mesa de Sequências
-
-- Antes da partida, escolha a quantidade de jogadores e a dificuldade dos computadores.
-- Clique nas peças do seu suporte para selecionar uma sequência ou um grupo válido.
-- Baixe a seleção ou compre uma peça para encerrar seu turno.
-
+- Escolha jogadores e dificuldade, selecione combinações válidas ou compre uma peça.
 
 ### Worms
-
-- Use A/D para mover a capivara atual, W para dar um pequeno pulo e as setas para cima/baixo para ajustar a mira.
-- Escolha uma das nove armas no seletor ou use Q para avançar rapidamente pelo arsenal.
-- Segure espaço para carregar a força e solte para lançar o projétil.
-- No mobile, use os controles touch dentro da área do jogo.
-- As explosões causam dano por proximidade e removem uma parte circular do terreno.
-- Use os botões sobre o mapa para reiniciar ou ativar a tela cheia.
+- Use A/D para mover a minhoca, W para um salto curto e ↑/↓ para mirar.
+- Selecione uma das nove armas ou use Q para alternar o arsenal.
+- Segure espaço para carregar o tiro e solte para disparar.
+- No mobile, use os controles dentro da área do jogo.
+- Clique em **Jogar online** para procurar outro usuário autenticado via WebSocket.
