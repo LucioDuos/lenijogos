@@ -6,7 +6,7 @@ Um portal de jogos em HTML, CSS e JavaScript. A página inicial permite escolher
 - **Guardiões da Trilha:** tower defense com mapa detalhado, quatro tipos de torre, melhorias, moedas, ondas sobrepostas, chefes, partículas e controle de velocidade.
 - **Cobrinha Gulosa:** arcade clássico no qual a cobrinha cresce e acelera conforme come frutas.
 - **Mesa de Sequências:** jogo de peças inspirado em Rummikub, com seleção de dificuldade e até três oponentes controlados pelo computador.
-- **Worms:** batalha de artilharia por turnos entre dois times, com terreno destrutível, vento, mira, força do disparo e controles touch.
+- **Worms:** batalha de artilharia por turnos entre dois times de capivaras, com terreno destrutível, vento, pequenos saltos, nove armas e controles touch.
 
 ## Como executar
 
@@ -47,7 +47,8 @@ Depois acesse `http://127.0.0.1:4173/`.
 
 ### Worms
 
-- Use A/D para mover o personagem atual e as setas para cima/baixo para ajustar a mira.
+- Use A/D para mover a capivara atual, W para dar um pequeno pulo e as setas para cima/baixo para ajustar a mira.
+- Escolha uma das nove armas no seletor ou use Q para avançar rapidamente pelo arsenal.
 - Segure espaço para carregar a força e solte para lançar o projétil.
 - No mobile, use os controles touch dentro da área do jogo.
 - As explosões causam dano por proximidade e removem uma parte circular do terreno.
