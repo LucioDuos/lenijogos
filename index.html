@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leni Jogos</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="menu-page">
+    <main class="shell menu-shell">
+      <header class="menu-header">
+        <p class="eyebrow">Escolha sua aventura</p>
+        <h1>Leni <span>Jogos</span></h1>
+        <p class="intro">Cinco mundos, novos desafios. Jogue em dupla, defenda o reino, bata recordes, monte sequências ou dispute uma batalha de artilharia.</p>
+      </header>
+
+      <section class="game-grid" aria-label="Jogos disponíveis">
+        <article class="game-option fire-water-card">
+          <div class="game-art" aria-hidden="true">
+            <span class="art-orb fire-orb">🔥</span>
+            <span class="versus">+</span>
+            <span class="art-orb water-orb">💧</span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Cooperação • Plataforma</span>
+            <h2>Fogo e Água</h2>
+            <p>Supere obstáculos elementais, recolha cristais e leve os dois guardiões aos portais do templo.</p>
+            <a class="play-link" href="lava.html">Jogar agora <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="game-option defense-card">
+          <div class="game-art defense-art" aria-hidden="true">
+            <span class="tower-icon">🏰</span>
+            <span class="path-line"></span>
+            <span class="enemy-dot enemy-one"></span>
+            <span class="enemy-dot enemy-two"></span>
+            <span class="enemy-dot enemy-three"></span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Estratégia • Sobrevivência</span>
+            <h2>Guardiões da Trilha</h2>
+            <p>Posicione armas, melhore suas defesas e impeça as criaturas de invadir a torre final.</p>
+            <a class="play-link defense-link" href="tower-defense.html">Defender reino <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="game-option snake-card">
+          <div class="game-art snake-art" aria-hidden="true">
+            <span class="snake-body">● ● ●</span>
+            <span class="snake-head">●</span>
+            <span class="snake-food">🍎</span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Arcade • Recorde</span>
+            <h2>Cobrinha Gulosa</h2>
+            <p>Coma frutas, cresça sem parar e desvie das paredes e do próprio corpo para marcar cada vez mais pontos.</p>
+            <a class="play-link snake-link" href="snake.html">Começar partida <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="game-option tiles-card">
+          <div class="game-art tiles-art" aria-hidden="true">
+            <span class="menu-tile tile-red">7</span>
+            <span class="menu-tile tile-blue">8</span>
+            <span class="menu-tile tile-yellow">9</span>
+            <span class="menu-tile tile-black">10</span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Estratégia • Peças</span>
+            <h2>Mesa de Sequências</h2>
+            <p>Monte grupos e sequências numéricas, escolha a dificuldade e dispute uma partida contra jogadores controlados pelo computador.</p>
+            <a class="play-link tiles-link" href="tile-game.html">Abrir mesa <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="game-option worms-card">
+          <div class="game-art worms-art" aria-hidden="true">
+            <span class="worms-hill"></span>
+            <span class="worms-unit worms-coral">●</span>
+            <span class="worms-shot">●</span>
+            <span class="worms-unit worms-blue">●</span>
+          </div>
+          <div class="game-content">
+            <span class="genre">Turnos • Artilharia</span>
+            <h2>Worms</h2>
+            <p>Controle seu time, ajuste a mira e destrua o terreno em uma batalha estratégica com projéteis e explosões.</p>
+            <a class="play-link worms-link" href="worms.html">Iniciar batalha <span>→</span></a>
+          </div>
+        </article>
+      </section>
+
+      <footer class="menu-footer">
+        <span>🎮</span>
+        <p>Escolha um jogo e divirta-se!</p>
+      </footer>
+    </main>
+    <script src="portal-client.js"></script>
+</body>
+</html>

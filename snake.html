@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cobrinha Gulosa • Leni Jogos</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="snake.css" />
+</head>
+<body class="snake-page">
+  <main class="snake-shell">
+    <header class="snake-header">
+      <div><a class="back-link" href="index.html">← Voltar para os jogos</a><p class="eyebrow">Arcade • Recorde</p><h1>Cobrinha Gulosa</h1><p class="intro">Coma as frutas, fique maior e não encoste nas paredes nem em seu próprio corpo.</p></div>
+      <div class="snake-stats" aria-live="polite"><div><span>🍎 Pontos</span><strong id="score">0</strong></div><div><span>🏆 Recorde</span><strong id="best">0</strong></div><button id="restartSnake">Nova partida</button></div>
+    </header>
+    <section class="snake-card-game">
+      <canvas id="snakeGame" width="720" height="600" aria-label="Tabuleiro do jogo da cobrinha"></canvas>
+      <div class="snake-side">
+        <div><p class="panel-kicker">Como jogar</p><h2 id="snakeStatus">Pronto para começar?</h2><p>Use as setas ou WASD para mudar a direção. Cada fruta deixa a cobrinha maior e acelera a partida.</p></div>
+        <div class="snake-controls" aria-label="Controles por toque"><button data-direction="up">▲</button><button data-direction="left">◀</button><button data-direction="down">▼</button><button data-direction="right">▶</button></div>
+        <div class="snake-tip">💡 Você também pode usar os botões de direção em telas sensíveis ao toque.</div>
+      </div>
+    </section>
+  </main>
+  <script src="snake.js"></script>
+  <script src="portal-client.js"></script>
+</body>
+</html>

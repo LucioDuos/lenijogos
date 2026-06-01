@@ -1,0 +1,64 @@
+.defense-page {
+  background: radial-gradient(circle at 14% 8%, rgba(73, 180, 107, .18), transparent 30rem), linear-gradient(140deg, #07140f, #111827 68%, #10182e);
+}
+.defense-shell { width: min(1510px, calc(100% - 30px)); margin: auto; padding: 24px 0 34px; }
+.defense-header { margin-bottom: 16px; }
+.defense-header h1 { font-size: clamp(2.3rem, 5vw, 4.6rem); }
+.defense-layout { display: grid; grid-template-columns: minmax(0, 1fr) 265px; gap: 12px; }
+.board-card, .defense-panel { border: 1px solid rgba(255, 255, 255, .12); border-radius: 21px; background: rgba(11, 22, 26, .82); box-shadow: 0 24px 80px rgba(0, 0, 0, .3); }
+.board-card { overflow: hidden; padding: 9px; }
+.game-stage { position: relative; overflow: hidden; border-radius: 14px; background: #193b35; }
+#defenseGame { display: block; width: 100%; aspect-ratio: 55 / 34; background: #193b35; }
+.game-hud { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; pointer-events: none; }
+.game-hud div { display: grid; min-width: 82px; gap: 3px; padding: 7px 10px; border: 1px solid rgba(255, 255, 255, .15); border-radius: 10px; background: rgba(8, 18, 22, .8); box-shadow: 0 6px 18px rgba(0, 0, 0, .18); backdrop-filter: blur(8px); }
+.game-hud span, .panel-kicker { color: #a7bbc0; font-size: .57rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.game-hud strong { font-size: 1.1rem; }
+.game-toolbar { position: absolute; top: 10px; right: 10px; display: flex; align-items: stretch; gap: 6px; }
+.game-toolbar button { padding: 8px 10px; border-radius: 9px; font-size: .72rem; box-shadow: 0 6px 18px rgba(0, 0, 0, .18); }
+.wave-button { background: linear-gradient(135deg, #df9938, #e75e49); }
+.wave-button:disabled { cursor: not-allowed; filter: grayscale(1); opacity: .6; }
+.speed-control { display: flex; align-items: center; gap: 7px; padding: 5px 6px 5px 9px; border: 1px solid rgba(255, 255, 255, .13); border-radius: 9px; background: rgba(8, 18, 22, .82); color: #dbe9e7; font-size: .65rem; backdrop-filter: blur(8px); }
+.speed-buttons { display: flex; gap: 3px; }
+.speed-buttons button { padding: 5px 7px; background: rgba(255, 255, 255, .09); box-shadow: none; }
+.speed-buttons button.active { background: linear-gradient(135deg, #31895a, #3878ec); }
+.icon-button { background: rgba(8, 18, 22, .82); }
+.game-notice { position: absolute; right: 10px; bottom: 10px; display: grid; max-width: min(460px, calc(100% - 20px)); gap: 3px; padding: 9px 11px; border: 1px solid rgba(255, 255, 255, .13); border-radius: 10px; background: rgba(8, 18, 22, .78); color: #dbe9e7; font-size: .69rem; pointer-events: none; backdrop-filter: blur(8px); }
+.game-notice span { color: #c5d7d5; }
+.game-notice small { color: #ffe39a; font-size: .65rem; }
+.board-caption { display: flex; flex-wrap: wrap; gap: 13px; padding: 10px 5px 1px; color: #b1c2c5; font-size: .73rem; }
+.board-caption i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 50%; vertical-align: -1px; }
+.legend-slot { border: 2px solid #dff9d9; }
+.legend-path { background: #c29a67; }
+.defense-panel { padding: 15px; }
+.panel-kicker { margin: 0 0 5px; color: #6dff9c; }
+.defense-panel h2 { margin: 0; font-size: 1.32rem; }
+.defense-panel p { color: #b1c2c5; font-size: .8rem; line-height: 1.45; }
+.tips { margin-top: 14px; border-top: 1px solid rgba(255, 255, 255, .1); padding-top: 10px; }
+.tips h3 { margin: 0; font-size: .9rem; }
+.tips ul { margin: 7px 0 0; padding-left: 16px; color: #9eb3b5; font-size: .71rem; line-height: 1.52; }
+.game-stage:fullscreen { display: grid; width: 100vw; height: 100vh; place-items: center; border-radius: 0; background: #07140f; }
+.game-stage:fullscreen #defenseGame { width: min(100vw, 161.765vh); height: auto; max-height: 100vh; }
+.game-stage:fullscreen .game-hud { top: 16px; left: 16px; }
+.game-stage:fullscreen .game-toolbar { top: 16px; right: 16px; }
+.game-stage:fullscreen .game-notice { right: 16px; bottom: 16px; }
+@media (max-width: 1180px) {
+  .game-toolbar { top: auto; right: 10px; bottom: 10px; }
+  .game-notice { right: auto; bottom: 10px; left: 10px; max-width: 420px; }
+}
+@media (max-width: 1050px) {
+  .defense-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .defense-shell { width: min(100% - 16px, 1510px); padding: 16px 0; }
+  .board-card { padding: 4px; }
+  .game-hud { top: 5px; left: 5px; gap: 3px; }
+  .game-hud div { min-width: 0; padding: 4px 6px; }
+  .game-hud span { font-size: .42rem; }
+  .game-hud strong { font-size: .76rem; }
+  .game-toolbar { right: 5px; bottom: 5px; gap: 3px; }
+  .game-toolbar button { padding: 5px 6px; font-size: .58rem; }
+  .speed-control { gap: 4px; padding: 3px 4px; font-size: .52rem; }
+  .speed-buttons button { padding: 3px 4px; }
+  .game-notice { display: none; }
+  .board-caption { gap: 7px; font-size: .63rem; }
+}

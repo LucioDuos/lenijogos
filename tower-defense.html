@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guardiões da Trilha • Leni Jogos</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tower-defense.css" />
+</head>
+<body class="defense-page">
+  <main class="defense-shell">
+    <header class="defense-header">
+      <a class="back-link" href="index.html">← Voltar para os jogos</a>
+      <p class="eyebrow">Estratégia • Sobrevivência</p>
+      <h1>Guardiões da Trilha</h1>
+      <p class="intro">Fortaleça o vale, combine torres e sobreviva às invasões que avançam sem descanso.</p>
+    </header>
+
+    <section class="defense-layout">
+      <div class="board-card">
+        <div id="gameStage" class="game-stage">
+          <canvas id="defenseGame" width="1100" height="680" aria-label="Mapa detalhado do jogo Guardiões da Trilha"></canvas>
+
+          <div class="game-hud" aria-live="polite">
+            <div><span>💰 Moedas</span><strong id="coins">260</strong></div>
+            <div><span>❤️ Base</span><strong id="lives">30</strong></div>
+            <div><span>⚔️ Onda</span><strong id="wave">0</strong></div>
+            <div><span>👾 Na trilha</span><strong id="enemyCount">0</strong></div>
+          </div>
+
+          <div class="game-toolbar">
+            <button id="waveBtn" class="wave-button">▶ Iniciar onda 1</button>
+            <div class="speed-control" aria-label="Velocidade da partida">
+              <span>Velocidade <b id="speedLabel">1x</b></span>
+              <div class="speed-buttons">
+                <button data-speed="1" class="active">1x</button>
+                <button data-speed="2">2x</button>
+                <button data-speed="3">3x</button>
+              </div>
+            </div>
+            <button id="soundBtn" class="icon-button" aria-label="Alternar som">🔊 Som</button>
+            <button id="fullscreenBtn" class="icon-button" aria-label="Alternar tela cheia">⛶ Tela cheia</button>
+          </div>
+
+          <div class="game-notice">
+            <strong id="panelTitle">Prepare suas defesas</strong>
+            <span id="panelText">Clique em um campo circular vazio para abrir o menu radial dentro do mapa.</span>
+            <small id="message">Você pode liberar uma nova onda mesmo enquanto outros inimigos continuam na trilha.</small>
+          </div>
+        </div>
+
+        <div class="board-caption">
+          <span><i class="legend-slot"></i> Clique em um campo circular</span>
+          <span><i class="legend-path"></i> Trilha dos invasores</span>
+          <span>🏹 Arqueiro</span><span>💣 Canhão</span><span>🔮 Magia</span><span>❄️ Gelo</span>
+        </div>
+      </div>
+
+      <aside class="defense-panel">
+        <div>
+          <p class="panel-kicker">Como jogar</p>
+          <h2>Proteja o cristal</h2>
+          <p>Use os campos circulares ao redor da trilha para construir defesas. Em tela cheia, todos os comandos continuam disponíveis sobre o mapa.</p>
+        </div>
+        <div class="tips">
+          <h3>Estratégia</h3>
+          <ul>
+            <li>Clique em um campo vazio para escolher uma torre.</li>
+            <li>Clique em uma torre construída para melhorar, vender ou conferir informações.</li>
+            <li>Arqueiros são rápidos e baratos.</li>
+            <li>Canhões explodem grupos de inimigos.</li>
+            <li>Magia causa alto dano e gelo desacelera invasores.</li>
+            <li>Libere novas ondas quando quiser. Após eliminar todos os inimigos, uma nova onda começa automaticamente em 5 segundos.</li>
+            <li>Um chefe aparece a cada 5 ondas.</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script src="tower-defense.js"></script>
+  <script src="portal-client.js"></script>
+</body>
+</html>
