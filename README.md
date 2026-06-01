@@ -17,7 +17,8 @@ O portal exige cadastro com **celular**, **apelido** e **senha**. O login utiliz
 1. Importe `db/schema.sql` no banco MySQL.
 2. Configure as variáveis de ambiente descritas em `.env.example` no servidor PHP.
 3. Não versione senhas reais em `.env` ou em arquivos PHP.
-4. Sirva o diretório usando PHP, por exemplo:
+4. Em hospedagens Apache/FastCGI, mantenha o `.htaccess` versionado para preservar o header `Authorization`. O frontend também envia o fallback seguro `X-Leni-Token`.
+5. Sirva o diretório usando PHP, por exemplo:
 
 ```bash
 php -S 127.0.0.1:4173

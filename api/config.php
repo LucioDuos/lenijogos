@@ -45,8 +45,20 @@ function normalized_phone(string $phone): string {
 }
 
 function bearer_token(): string {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) return $matches[1];
+    $headers = [
+        $_SERVER['HTTP_AUTHORIZATION'] ?? '',
+        $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '',
+        $_SERVER['Authorization'] ?? '',
+    ];
+    if (function_exists('getallheaders')) {
+        $requestHeaders = getallheaders();
+        $headers[] = $requestHeaders['Authorization'] ?? $requestHeaders['authorization'] ?? '';
+    }
+    foreach ($headers as $header) {
+        if (preg_match('/^Bearer\s+(.+)$/i', trim((string) $header), $matches)) return trim($matches[1]);
+    }
+    $fallback = trim((string) ($_SERVER['HTTP_X_LENI_TOKEN'] ?? ''));
+    if ($fallback !== '') return $fallback;
     json_response(['error' => 'Autenticação obrigatória.'], 401);
 }
 
