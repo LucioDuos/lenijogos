@@ -1,6 +1,27 @@
 <?php
 declare(strict_types=1);
 
+/** Carrega pares CHAVE=VALOR de um arquivo local sem sobrescrever variáveis do servidor. */
+function carregar_env(string $arquivo): void {
+    if (!is_file($arquivo) || !is_readable($arquivo)) return;
+    $linhas = file($arquivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($linhas === false) return;
+    foreach ($linhas as $linha) {
+        $linha = trim($linha);
+        if ($linha === '' || str_starts_with($linha, '#') || !str_contains($linha, '=')) continue;
+        [$chave, $valor] = array_map('trim', explode('=', $linha, 2));
+        if ($chave === '' || getenv($chave) !== false) continue;
+        if ((str_starts_with($valor, '"') && str_ends_with($valor, '"')) || (str_starts_with($valor, "'") && str_ends_with($valor, "'"))) {
+            $valor = substr($valor, 1, -1);
+        }
+        putenv("{$chave}={$valor}");
+        $_ENV[$chave] = $valor;
+        $_SERVER[$chave] = $valor;
+    }
+}
+
+carregar_env(__DIR__ . '/.env');
+
 function env_required(string $name): string {
     $value = getenv($name);
     if ($value === false || $value === '') {

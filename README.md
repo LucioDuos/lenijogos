@@ -15,8 +15,8 @@ Portal de jogos em HTML, CSS e JavaScript com autenticação PHP, persistência 
 O portal exige cadastro com **celular**, **apelido** e **senha**. O login utiliza celular e senha. As senhas dos jogadores são armazenadas somente como hash por `password_hash()` e os tokens de sessão também são persistidos como hash.
 
 1. Importe `db/schema.sql` no banco MySQL.
-2. Configure as variáveis de ambiente descritas em `.env.example` no servidor PHP.
-3. Não versione senhas reais em `.env` ou em arquivos PHP.
+2. Copie `.env.example` para `api/.env` e preencha os dados reais no servidor PHP. O arquivo é carregado por `carregar_env(__DIR__ . '/.env')`.
+3. Não versione senhas reais em `.env`, `api/.env` ou em arquivos PHP. Variáveis configuradas diretamente no servidor têm prioridade sobre o arquivo local.
 4. Em hospedagens Apache/FastCGI, mantenha o `.htaccess` versionado para preservar o header `Authorization`. O frontend também envia o fallback seguro `X-Leni-Token`.
 5. Sirva o diretório usando PHP, por exemplo:
 
